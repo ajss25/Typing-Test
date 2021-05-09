@@ -88,6 +88,7 @@ class TestScreen(Frame, GlobalTestState):
 
 		def getTypedChars():
 			typed_content = test_field.get("1.0", "end")
+			print(len(typed_content))
 			GlobalTestState.typed_characters = len(typed_content)
 
 		done_button = Button(self, text="Done", command=lambda: [getTypedChars(), master.show_frame(ResultScreen)])
@@ -103,12 +104,14 @@ class ResultScreen(Frame, GlobalTestState):
 		result_label.place(relx=0.5, rely=0.3, anchor="n")
 
 		# COLOR CODED - should account for correct/wrong words?
-		# NEED TO RETURN 0 WPM - if nothing typed
 		# ACCURATE WPM - calculation methods
-		wpm_speed = (GlobalTestState.typed_characters / 5) / ((GlobalTestState.seconds_elapsed-1) / 60)
-		wpm_rounded = round(wpm_speed, 0)
+		wpm = 0
+		if GlobalTestState.typed_characters != 1:
+			wpm_speed = (GlobalTestState.typed_characters / 5) / ((GlobalTestState.seconds_elapsed) / 60)
+			wpm_rounded = round(wpm_speed, 0)
+			wpm = wpm_rounded
 
-		score_label = Label(self, text=str(wpm_rounded)+" WPM", font=("Arial", 25))
+		score_label = Label(self, text=str(wpm)+" WPM", font=("Arial", 25))
 		score_label.place(relx=0.5, rely=0.4, anchor="n")
 
 		retry_button = Button(self, text="Retry", command=lambda: master.show_frame(HomeScreen))
