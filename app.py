@@ -1,7 +1,8 @@
+# References:
 # https://www.tutorialspoint.com/python3/python_gui_programming.htm
 # https://stackoverflow.com/questions/7546050/switch-between-two-frames-in-tkinter
 # https://stackoverflow.com/questions/34029223/basic-tkinter-countdown-timer
-# https://en.wikipedia.org/wiki/Words_per_minute
+# https://www.speedtypingonline.com/typing-equations
 
 import requests
 from tkinter import *
@@ -11,6 +12,8 @@ class GlobalTestState:
 	def __init__(self):
 		self.finished_test = False
 		self.seconds_elapsed = 0
+		self.test_words_list = []
+		self.typed_words_list = []
 		self.typed_characters = 0
 		self.searched_keyword = ""
 		self.text_block = ""
@@ -80,6 +83,8 @@ class TestScreen(Frame, GlobalTestState):
 		GlobalTestState.finished_test = False
 		GlobalTestState.seconds_elapsed = 0
 		GlobalTestState.typed_characters = 0
+		GlobalTestState.test_words_list = []
+		GlobalTestState.typed_words_list = []
 		
 		test_label = Label(self, text=GlobalTestState.searched_keyword, font=("Arial", 25))
 		test_label.place(relx=0.5, rely=0.1, anchor="n")
@@ -113,7 +118,11 @@ class TestScreen(Frame, GlobalTestState):
 
 		def getTypedChars():
 			typed_content = test_field.get("1.0", "end")
+			GlobalTestState.typed_words_list = typed_content.split()
 			GlobalTestState.typed_characters = len(typed_content)
+
+			test_content = test_text.get("1.0", "end")
+			GlobalTestState.test_words_list = test_content.split()
 
 		done_button = Button(self, text="Done", command=lambda: [getTypedChars(), master.show_frame(ResultScreen)])
 		done_button.place(relx=0.5, rely=0.88, anchor="n")
@@ -131,14 +140,24 @@ class ResultScreen(Frame, GlobalTestState):
 		
 		wpm = 0
 		if GlobalTestState.typed_characters != 1:
-			wpm_speed = (GlobalTestState.typed_characters / 5) / ((GlobalTestState.seconds_elapsed) / 60)
-			wpm_rounded = round(wpm_speed, 0)
-			wpm = wpm_rounded
+			errors = 0
+			i = j = 0
+			while i < len(GlobalTestState.test_words_list) and j < len(GlobalTestState.typed_words_list):
+				if GlobalTestState.test_words_list[i] != GlobalTestState.typed_words_list[j]:
+					errors += len(GlobalTestState.test_words_list[i])
+				i += 1
+				j += 1
 
-		score_label = Label(self, text=str(wpm)+" WPM", font=("Arial", 25))
+			while i < len(GlobalTestState.test_words_list):
+				errors += len(GlobalTestState.test_words_list[i])
+				i += 1
+			
+			net_wpm = ((GlobalTestState.typed_characters / 5) - errors) / (GlobalTestState.seconds_elapsed / 60)
+
+		score_label = Label(self, text=str(net_wpm)+" WPM", font=("Arial", 25))
 		score_label.place(relx=0.5, rely=0.4, anchor="n")
 
-		wpm_label = Label(self, text="Gross WPM is calculated by counting typed characters divided by five subsequently divided by the time it took in minutes.")
+		wpm_label = Label(self, text="WPM is calculated by taking into account all typed entries, uncorrected errors, and time taken. Learn more at: https://www.speedtypingonline.com/typing-equations")
 		wpm_label.place(relx=0.5, rely=0.44, anchor="n")
 
 		retry_button = Button(self, text="Retry", command=lambda: master.show_frame(HomeScreen))
