@@ -118,9 +118,9 @@ class TestScreen(Frame, GlobalTestState):
 
 		def getTypedChars():
 			typed_content = test_field.get("1.0", "end")
-			GlobalTestState.typed_words_list = typed_content.split()
 			GlobalTestState.typed_characters = len(typed_content)
-
+			GlobalTestState.typed_words_list = typed_content.split()
+			
 			test_content = test_text.get("1.0", "end")
 			GlobalTestState.test_words_list = test_content.split()
 
@@ -144,17 +144,19 @@ class ResultScreen(Frame, GlobalTestState):
 			i = j = 0
 			while i < len(GlobalTestState.test_words_list) and j < len(GlobalTestState.typed_words_list):
 				if GlobalTestState.test_words_list[i] != GlobalTestState.typed_words_list[j]:
-					errors += len(GlobalTestState.test_words_list[i])
+					errors += 1
 				i += 1
 				j += 1
 
 			while i < len(GlobalTestState.test_words_list):
-				errors += len(GlobalTestState.test_words_list[i])
+				errors += 1
 				i += 1
 			
 			net_wpm = ((GlobalTestState.typed_characters / 5) - errors) / (GlobalTestState.seconds_elapsed / 60)
+			if net_wpm < 0:
+				net_wpm = 0
 
-		score_label = Label(self, text=str(net_wpm)+" WPM", font=("Arial", 25))
+		score_label = Label(self, text=str(round(net_wpm))+" WPM", font=("Arial", 25))
 		score_label.place(relx=0.5, rely=0.4, anchor="n")
 
 		wpm_label = Label(self, text="WPM is calculated by taking into account all typed entries, uncorrected errors, and time taken. Learn more at: https://www.speedtypingonline.com/typing-equations")
