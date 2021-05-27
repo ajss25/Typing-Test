@@ -22,7 +22,7 @@ class GlobalTestState:
 class TypingTest(Tk, GlobalTestState):
 	def __init__(self):
 		Tk.__init__(self)
-		
+
 		# set tkinter frame size to 900x1100
 		self.canvas = Canvas(self, height=900, width=1100)
 		self.canvas.pack()
@@ -51,8 +51,18 @@ class HomeScreen(Frame, GlobalTestState):
 		help_message = Label(self, text="Search using a keyword on a topic you want to type about for the typing test", font=("Arial", 13))
 		help_message.place(relx=0.5, rely=0.4, anchor="n")
 
-		def errorMessage():
+		def error_message():
 			error_message = messagebox.showerror("Error", "You did not enter a keyword, or entered an invalid keyword. Try again.")
+
+		def setup_test(data):
+			GlobalTestState.text_block = data["content"]
+			GlobalTestState.searched_keyword = keyword.get()
+			master.show_frame(TestScreen)
+
+		def invalid_keyword():
+			GlobalTestState.searched_keyword = ""
+			GlobalTestState.text_block = ""
+			error_message()
 			
 		def get_keyword():
 			if keyword.get():
@@ -61,19 +71,13 @@ class HomeScreen(Frame, GlobalTestState):
 				data = response.json()
 
 				if data["content"] != "Other reasons this message may be displayed:":
-					GlobalTestState.text_block = data["content"]
-					GlobalTestState.searched_keyword = keyword.get()
-					master.show_frame(TestScreen)
+					setup_test(data)
 
 				else:
-					GlobalTestState.searched_keyword = ""
-					GlobalTestState.text_block = ""
-					errorMessage()
+					invalid_keyword()
 					
 			else:
-				GlobalTestState.searched_keyword = ""
-				GlobalTestState.text_block = ""
-				errorMessage()
+				invalid_keyword()
 
 		go_button = Button(self, text="Go", command=get_keyword)
 		go_button.place(relx=0.5, rely=0.53, anchor="n")
