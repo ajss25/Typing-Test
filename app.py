@@ -10,6 +10,7 @@ from tkinter import messagebox
 
 class GlobalTestState:
 	def __init__(self):
+		# initialize global settings
 		self.finished_test = False
 		self.seconds_elapsed = 0
 		self.test_words_list = []
@@ -21,6 +22,8 @@ class GlobalTestState:
 class TypingTest(Tk, GlobalTestState):
 	def __init__(self):
 		Tk.__init__(self)
+		
+		# set tkinter frame size to 900x1100
 		self.canvas = Canvas(self, height=900, width=1100)
 		self.canvas.pack()
 		self.frame = None
@@ -131,6 +134,7 @@ class ResultScreen(Frame, GlobalTestState):
 	def __init__(self, master):
 		Frame.__init__(self, master)
 
+		# reset global test state for every test
 		GlobalTestState.finished_test = True
 		GlobalTestState.searched_keyword = ""
 		GlobalTestState.text_block = ""
@@ -138,7 +142,7 @@ class ResultScreen(Frame, GlobalTestState):
 		result_label = Label(self, text="Score:", font=("Arial", 25))
 		result_label.place(relx=0.5, rely=0.3, anchor="n")
 		
-		wpm = 0
+		net_wpm = 0
 		if GlobalTestState.typed_characters != 1:
 			errors = 0
 			i = j = 0
@@ -155,6 +159,8 @@ class ResultScreen(Frame, GlobalTestState):
 			net_wpm = ((GlobalTestState.typed_characters / 5) - errors) / (GlobalTestState.seconds_elapsed / 60)
 			if net_wpm < 0:
 				net_wpm = 0
+			
+			# print(net_wpm)
 
 		score_label = Label(self, text=str(round(net_wpm))+" WPM", font=("Arial", 25))
 		score_label.place(relx=0.5, rely=0.4, anchor="n")
