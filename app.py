@@ -5,6 +5,7 @@
 # https://www.speedtypingonline.com/typing-equations
 
 import requests
+import smtplib
 from tkinter import *
 from tkinter import messagebox
 
@@ -18,6 +19,7 @@ class GlobalTestState:
 		self.typed_characters = 0
 		self.searched_keyword = ""
 		self.text_block = ""
+		self.entered_report = ""
 
 class TypingTest(Tk, GlobalTestState):
 	def __init__(self):
@@ -163,8 +165,6 @@ class ResultScreen(Frame, GlobalTestState):
 			net_wpm = ((GlobalTestState.typed_characters / 5) - errors) / (GlobalTestState.seconds_elapsed / 60)
 			if net_wpm < 0:
 				net_wpm = 0
-			
-			# print(net_wpm)
 
 		score_label = Label(self, text=str(round(net_wpm))+" WPM", font=("Arial", 25))
 		score_label.place(relx=0.5, rely=0.4, anchor="n")
@@ -174,6 +174,31 @@ class ResultScreen(Frame, GlobalTestState):
 
 		retry_button = Button(self, text="Retry", command=lambda: master.show_frame(HomeScreen))
 		retry_button.place(relx=0.5, rely=0.48, anchor="n")
+
+		report_page_button = Button(self, text="Report/Feedback", command=lambda: master.show_frame(ReportScreen))
+		report_page_button.place(relx=0.5, rely=0.53, anchor="n")
+
+class ReportScreen(Frame, GlobalTestState):
+	def __init__(self, master):
+		Frame.__init__(self, master)
+
+		report_label = Label(self, text="Report a problem and/or provide feedback!")
+		report_label.place(relx=0.5, rely=0.3, anchor="n")
+
+		entered_report = Text(self, font=("Arial", 15), wrap=WORD)
+		# entered_report.tag_configure("")
+		entered_report.config(highlightbackground="#0096fc")
+		entered_report.place(relx=0.5, rely=0.4, anchor="n", width=700, height=150)
+
+		def send_report():
+			GlobalTestState.entered_report = entered_report.get("1.0", "end")
+			print(GlobalTestState.entered_report)
+
+		send_button = Button(self, text="Send report/feedback", command=lambda: [send_report(), master.show_frame(HomeScreen)])
+		send_button.place(relx=0.5, rely=0.9, anchor="n")
+		
+		# report_button = Button(self, text="Report/Feedback")
+		# report_button.place(relx=0.5, rely=0.53, anchor="n")
 
 if __name__ == "__main__":
 	app = TypingTest()
