@@ -3,9 +3,11 @@
 # https://stackoverflow.com/questions/7546050/switch-between-two-frames-in-tkinter
 # https://stackoverflow.com/questions/34029223/basic-tkinter-countdown-timer
 # https://www.speedtypingonline.com/typing-equations
+# https://codingshiksha.com/tutorials/python-tkinter-gui-script-to-send-email-using-smtplib-library-full-tutorial/
 
 import requests
 import smtplib
+import yaml
 from tkinter import *
 from tkinter import messagebox
 
@@ -186,19 +188,23 @@ class ReportScreen(Frame, GlobalTestState):
 		report_label.place(relx=0.5, rely=0.3, anchor="n")
 
 		entered_report = Text(self, font=("Arial", 15), wrap=WORD)
-		# entered_report.tag_configure("")
 		entered_report.config(highlightbackground="#0096fc")
 		entered_report.place(relx=0.5, rely=0.4, anchor="n", width=700, height=150)
 
 		def send_report():
 			GlobalTestState.entered_report = entered_report.get("1.0", "end")
-			print(GlobalTestState.entered_report)
 
+			config = yaml.safe_load(open('credentials.yaml'))
+			admin_email = config["admin_email"]
+			admin_pw = config["admin_pw"]
+
+			email_sender = smtplib.SMTP("smtp.gmail.com", 587)
+			email_sender.starttls()
+			email_sender.login(admin_email, admin_pw)
+			email_sender.sendmail(admin_email, admin_email, GlobalTestState.entered_report)
+			
 		send_button = Button(self, text="Send report/feedback", command=lambda: [send_report(), master.show_frame(HomeScreen)])
 		send_button.place(relx=0.5, rely=0.9, anchor="n")
-		
-		# report_button = Button(self, text="Report/Feedback")
-		# report_button.place(relx=0.5, rely=0.53, anchor="n")
 
 if __name__ == "__main__":
 	app = TypingTest()
