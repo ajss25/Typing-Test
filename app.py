@@ -27,7 +27,6 @@ class TypingTest(Tk, GlobalTestState):
 	def __init__(self):
 		Tk.__init__(self)
 
-		# set tkinter frame size to 900x1100
 		self.canvas = Canvas(self, height=900, width=1100)
 		self.canvas.pack()
 		self.frame = None
@@ -205,6 +204,9 @@ class ReportScreen(Frame, GlobalTestState):
 			
 		send_button = Button(self, text="Send report/feedback", command=lambda: [send_report(), master.show_frame(HomeScreen)])
 		send_button.place(relx=0.5, rely=0.9, anchor="n")
+
+		back_button = Button(self, text="Home", command=lambda: master.show_frame(HomeScreen))
+		back_button.place(relx=0.5, rely=0.94, anchor="n")
 
 if __name__ == "__main__":
 	app = TypingTest()
