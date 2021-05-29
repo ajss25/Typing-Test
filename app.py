@@ -142,7 +142,7 @@ class ResultScreen(Frame, GlobalTestState):
 	def __init__(self, master):
 		Frame.__init__(self, master)
 
-		# reset global test state for every test
+		# reset test status, keyword and prompt
 		GlobalTestState.finished_test = True
 		GlobalTestState.searched_keyword = ""
 		GlobalTestState.text_block = ""
@@ -208,4 +208,5 @@ class ReportScreen(Frame, GlobalTestState):
 
 if __name__ == "__main__":
 	app = TypingTest()
+	app.title("Typing Test")
 	app.mainloop()
