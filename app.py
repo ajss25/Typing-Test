@@ -13,7 +13,7 @@ from tkinter import messagebox
 
 class GlobalTestState:
 	def __init__(self):
-		# initialize global settings
+		# initialize global test settings
 		self.finished_test = False
 		self.seconds_elapsed = 0
 		self.test_words_list = []
@@ -32,6 +32,7 @@ class TypingTest(Tk, GlobalTestState):
 		self.frame = None
 		self.show_frame(HomeScreen)
 	
+	# method for switching between frames
 	def show_frame(self, screen_name):
 		frame_to_show = screen_name(self)
 		if self.frame:
@@ -40,6 +41,7 @@ class TypingTest(Tk, GlobalTestState):
 		self.frame.place(relwidth=1.0, relheight=1.0)
 		self.frame.configure(background="#8ab6d6")
 
+# HomeScreen where user enters keyword to start test
 class HomeScreen(Frame, GlobalTestState):
 	def __init__(self, master):
 		Frame.__init__(self, master)
@@ -55,6 +57,7 @@ class HomeScreen(Frame, GlobalTestState):
 		help_message = Label(self, text="Search using a keyword on a topic you want to type about for the typing test", font=("Arial", 17), background="#8ab6d6", fg="#0a1931")
 		help_message.place(relx=0.5, rely=0.4, anchor="n")
 
+		# called when user enters invalid keyword or no keyword
 		def error_message():
 			error_message = messagebox.showerror("Error", "You did not enter a keyword, or entered an invalid keyword. Try again.")
 
@@ -67,7 +70,8 @@ class HomeScreen(Frame, GlobalTestState):
 			GlobalTestState.searched_keyword = ""
 			GlobalTestState.text_block = ""
 			error_message()
-			
+		
+		# gets keyword from user and fetches web scraped data from Wikipedia on the keyword
 		def get_keyword():
 			if keyword.get():
 				url = "https://daniel-yu.herokuapp.com/get_data/" + keyword.get()
@@ -86,11 +90,12 @@ class HomeScreen(Frame, GlobalTestState):
 		go_button = Button(self, text="GO", command=get_keyword, fg="#0a1931")
 		go_button.place(relx=0.5, rely=0.53, anchor="n")
 
+# TestScreen for user taking the typing test
 class TestScreen(Frame, GlobalTestState):
 	def __init__(self, master):
 		Frame.__init__(self, master)
 		
-		# reset global test state for every test
+		# reset global variables for every test
 		GlobalTestState.finished_test = False
 		GlobalTestState.seconds_elapsed = 0
 		GlobalTestState.typed_characters = 0
@@ -103,6 +108,7 @@ class TestScreen(Frame, GlobalTestState):
 		timer_label = Label(self, background="#8ab6d6", fg="#0a1931", font=("Arial", 17))
 		timer_label.place(relx=0.8, rely=0.1, anchor="n")
 
+		# initialize timer
 		def seconds_timer(start_time=0):
 			if GlobalTestState.finished_test is False:
 				GlobalTestState.seconds_elapsed += 1
@@ -127,6 +133,7 @@ class TestScreen(Frame, GlobalTestState):
 		test_button = Button(self, text="RESTART", command=lambda: master.show_frame(HomeScreen), fg="#0a1931")
 		test_button.place(relx=0.5, rely=0.85, anchor="n")
 
+		# get number of characters user typed
 		def getTypedChars():
 			typed_content = test_field.get("1.0", "end")
 			GlobalTestState.typed_characters = len(typed_content)
@@ -138,6 +145,7 @@ class TestScreen(Frame, GlobalTestState):
 		done_button = Button(self, text="DONE", command=lambda: [getTypedChars(), master.show_frame(ResultScreen)], fg="#0a1931")
 		done_button.place(relx=0.5, rely=0.88, anchor="n")
 
+# ResultScreen displaying WPM
 class ResultScreen(Frame, GlobalTestState):
 	def __init__(self, master):
 		Frame.__init__(self, master)
@@ -150,6 +158,7 @@ class ResultScreen(Frame, GlobalTestState):
 		result_label = Label(self, text="Result", font=("Arial", 33), background="#8ab6d6", fg="#0a1931")
 		result_label.place(relx=0.5, rely=0.3, anchor="n")
 		
+		# calculate net wpm
 		net_wpm = 0
 		if GlobalTestState.typed_characters != 1:
 			errors = 0
@@ -180,6 +189,7 @@ class ResultScreen(Frame, GlobalTestState):
 		report_page_button = Button(self, text="REPORT / FEEDBACK", command=lambda: master.show_frame(ReportScreen), fg="#0a1931")
 		report_page_button.place(relx=0.5, rely=0.58, anchor="n")
 
+# ReportScreen where user can submit message to admin
 class ReportScreen(Frame, GlobalTestState):
 	def __init__(self, master):
 		Frame.__init__(self, master)
@@ -194,6 +204,7 @@ class ReportScreen(Frame, GlobalTestState):
 		entered_report.config(highlightbackground="#0096fc")
 		entered_report.place(relx=0.5, rely=0.4, anchor="n", width=700, height=150)
 
+		# method for sending user's message to admin's email address
 		def send_report():
 			GlobalTestState.entered_report = entered_report.get("1.0", "end")
 
