@@ -38,6 +38,7 @@ class TypingTest(Tk, GlobalTestState):
 			self.frame.destroy()
 		self.frame = frame_to_show
 		self.frame.place(relwidth=1.0, relheight=1.0)
+		self.frame.configure(background="#8ab6d6")
 
 class HomeScreen(Frame, GlobalTestState):
 	def __init__(self, master):
@@ -45,13 +46,13 @@ class HomeScreen(Frame, GlobalTestState):
 
 		keyword = StringVar()
 
-		home_label = Label(self, text="Typing Test", font=("Arial", 33))
-		home_label.place(relx=0.5, rely=0.1, anchor="n")
+		home_label = Label(self, text="Typing Test", font=("Arial", 33), background="#8ab6d6", fg="#0a1931")
+		home_label.place(relx=0.5, rely=0.3, anchor="n")
 
 		search_keyword = Entry(self, textvariable=keyword)
 		search_keyword.place(relx=0.5, rely=0.45, anchor="n")
 
-		help_message = Label(self, text="Search using a keyword on a topic you want to type about for the typing test", font=("Arial", 13))
+		help_message = Label(self, text="Search using a keyword on a topic you want to type about for the typing test", font=("Arial", 17), background="#8ab6d6", fg="#0a1931")
 		help_message.place(relx=0.5, rely=0.4, anchor="n")
 
 		def error_message():
@@ -82,7 +83,7 @@ class HomeScreen(Frame, GlobalTestState):
 			else:
 				invalid_keyword()
 
-		go_button = Button(self, text="Go", command=get_keyword)
+		go_button = Button(self, text="GO", command=get_keyword, fg="#0a1931")
 		go_button.place(relx=0.5, rely=0.53, anchor="n")
 
 class TestScreen(Frame, GlobalTestState):
@@ -96,16 +97,16 @@ class TestScreen(Frame, GlobalTestState):
 		GlobalTestState.test_words_list = []
 		GlobalTestState.typed_words_list = []
 		
-		test_label = Label(self, text=GlobalTestState.searched_keyword, font=("Arial", 25))
+		test_label = Label(self, text=GlobalTestState.searched_keyword, font=("Arial", 33), background="#8ab6d6", fg="#0a1931")
 		test_label.place(relx=0.5, rely=0.1, anchor="n")
 
-		timer_label = Label(self)
+		timer_label = Label(self, background="#8ab6d6", fg="#0a1931", font=("Arial", 17))
 		timer_label.place(relx=0.8, rely=0.1, anchor="n")
 
 		def seconds_timer(start_time=0):
 			if GlobalTestState.finished_test is False:
 				GlobalTestState.seconds_elapsed += 1
-				timer_label["text"] = "seconds elapsed: " + str(start_time)
+				timer_label["text"] = "Seconds Elapsed: " + str(start_time)
 				self.after(1000, seconds_timer, start_time+1)
 			
 		seconds_timer()
@@ -123,7 +124,7 @@ class TestScreen(Frame, GlobalTestState):
 		test_field.config(highlightbackground="#0096fc")
 		test_field.place(relx=0.97, rely=0.5, anchor="e", width=500, height=600)
 
-		test_button = Button(self, text="Restart", command=lambda: master.show_frame(HomeScreen))
+		test_button = Button(self, text="RESTART", command=lambda: master.show_frame(HomeScreen), fg="#0a1931")
 		test_button.place(relx=0.5, rely=0.85, anchor="n")
 
 		def getTypedChars():
@@ -134,7 +135,7 @@ class TestScreen(Frame, GlobalTestState):
 			test_content = test_text.get("1.0", "end")
 			GlobalTestState.test_words_list = test_content.split()
 
-		done_button = Button(self, text="Done", command=lambda: [getTypedChars(), master.show_frame(ResultScreen)])
+		done_button = Button(self, text="DONE", command=lambda: [getTypedChars(), master.show_frame(ResultScreen)], fg="#0a1931")
 		done_button.place(relx=0.5, rely=0.88, anchor="n")
 
 class ResultScreen(Frame, GlobalTestState):
@@ -146,7 +147,7 @@ class ResultScreen(Frame, GlobalTestState):
 		GlobalTestState.searched_keyword = ""
 		GlobalTestState.text_block = ""
 
-		result_label = Label(self, text="Score:", font=("Arial", 25))
+		result_label = Label(self, text="Result", font=("Arial", 33), background="#8ab6d6", fg="#0a1931")
 		result_label.place(relx=0.5, rely=0.3, anchor="n")
 		
 		net_wpm = 0
@@ -167,24 +168,27 @@ class ResultScreen(Frame, GlobalTestState):
 			if net_wpm < 0:
 				net_wpm = 0
 
-		score_label = Label(self, text=str(round(net_wpm))+" WPM", font=("Arial", 25))
+		score_label = Label(self, text=str(round(net_wpm))+" WPM", font=("Arial", 25), background="#8ab6d6", fg="#0a1931")
 		score_label.place(relx=0.5, rely=0.4, anchor="n")
 
-		wpm_label = Label(self, text="WPM is calculated by taking into account all typed entries, uncorrected errors, and time taken. Learn more at: https://www.speedtypingonline.com/typing-equations")
-		wpm_label.place(relx=0.5, rely=0.44, anchor="n")
+		wpm_label = Label(self, text="WPM is calculated by taking into account all typed entries, uncorrected errors, and time taken. \n Learn more at: https://www.speedtypingonline.com/typing-equations", background="#8ab6d6", fg="#0a1931")
+		wpm_label.place(relx=0.5, rely=0.45, anchor="n")
 
-		retry_button = Button(self, text="Retry", command=lambda: master.show_frame(HomeScreen))
-		retry_button.place(relx=0.5, rely=0.48, anchor="n")
+		retry_button = Button(self, text="RETRY", command=lambda: master.show_frame(HomeScreen), fg="#0a1931")
+		retry_button.place(relx=0.5, rely=0.55, anchor="n")
 
-		report_page_button = Button(self, text="Report/Feedback", command=lambda: master.show_frame(ReportScreen))
-		report_page_button.place(relx=0.5, rely=0.53, anchor="n")
+		report_page_button = Button(self, text="REPORT / FEEDBACK", command=lambda: master.show_frame(ReportScreen), fg="#0a1931")
+		report_page_button.place(relx=0.5, rely=0.58, anchor="n")
 
 class ReportScreen(Frame, GlobalTestState):
 	def __init__(self, master):
 		Frame.__init__(self, master)
 
-		report_label = Label(self, text="Report a problem and/or provide feedback!")
+		report_label = Label(self, text="Report / Feedback", background="#8ab6d6", fg="#0a1931", font=("Arial", 33))
 		report_label.place(relx=0.5, rely=0.3, anchor="n")
+
+		how_to_label = Label(self, text="Enter a message to report a bug/problem you found and/or leave feedback!", background="#8ab6d6", fg="#0a1931", font=("Arial", 12))
+		how_to_label.place(relx=0.5, rely=0.35, anchor="n")
 
 		entered_report = Text(self, font=("Arial", 15), wrap=WORD)
 		entered_report.config(highlightbackground="#0096fc")
@@ -202,11 +206,11 @@ class ReportScreen(Frame, GlobalTestState):
 			email_sender.login(admin_email, admin_pw)
 			email_sender.sendmail(admin_email, admin_email, GlobalTestState.entered_report)
 			
-		send_button = Button(self, text="Send report/feedback", command=lambda: [send_report(), master.show_frame(HomeScreen)])
-		send_button.place(relx=0.5, rely=0.9, anchor="n")
+		send_button = Button(self, text="SEND", command=lambda: [send_report(), master.show_frame(HomeScreen)], fg="#0a1931")
+		send_button.place(relx=0.5, rely=0.61, anchor="n")
 
-		back_button = Button(self, text="Home", command=lambda: master.show_frame(HomeScreen))
-		back_button.place(relx=0.5, rely=0.94, anchor="n")
+		back_button = Button(self, text="HOME", command=lambda: master.show_frame(HomeScreen), fg="#0a1931")
+		back_button.place(relx=0.5, rely=0.64, anchor="n")
 
 if __name__ == "__main__":
 	app = TypingTest()
